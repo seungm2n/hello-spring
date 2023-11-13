@@ -30,5 +30,88 @@
 ### 회원 레포지토리 메모리 구현체 테스트
 `src/test/java`하위 폴더에 생성한다.
 ```java
+import com.example.hellospring.domain.Member;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+class MemoryMemberRepositoryTest {
+
+    MemoryMemberRepository repository = new MemoryMemberRepository();
+
+
+    // 하나의 테스트가 끝날 때마다 지워주기 위함.
+    @AfterEach
+    public void afterEach() {
+        repository.clearStore();
+    }
+
+    @Test
+    public void save() {
+        Member member = new Member();
+        member.setName("spring");
+
+        repository.save(member);
+
+        Member result = repository.findById(member.getId()).get();
+        // Assertions.assertEquals(member, result);
+        assertThat(member).isEqualTo(result);
+    }
+
+    @Test
+    public void findByName() {
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        Member result = repository.findByName("spring1").get();
+        assertThat(result).isEqualTo(member1);
+    }
+
+    @Test
+    public void findAll() {
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        List<Member> result = repository.findAll();
+        assertThat(result.size()).isEqualTo(2);
+    }
+}
+```
+
+## 스프링 빈과 의존관계
+
+### 스프링 빈을 등록하고 의존관계 설정
+- 회원 컨트롤러가 회원서비스와 회원 레포지토리를 사용할 수 있게 의존관계를 준비함.
+
+### 회원 컨트롤러에 의존관계 추가
+```java
 
 ```
+
+#### 스프링 빈을 등록하는 두가지 방법
+- 컴포넌트 스캔과 자동 의존관계 설정
+- 자바 코드로 직접 스프링 빈 등록하기
+
+#### 컴포넌트 스캔과 자동 의존관계 설정
+
+- `@Component` 애노테이션이 있으면 스프링 빈으로 자동 등록
+- `@Controller` 컨트롤러가 스프링 빈으로 자동으로 등록되는 이유도 컴포넌트 스캔 때문
+
+- `@Component`를 포함하는 다음 애노테이션도 스프링 빈으로 자동 등록
+  - `@Controller`
+  - `@Service`
+  - `@Repository`
+
