@@ -24,7 +24,7 @@ public class SpringConfig {
 
     private DataSource dataSource;
 
-    @Autowired
+    @Autowired 
     public SpringConfig(DataSource dataSource) {
         this.dataSource = dataSource;
     }
